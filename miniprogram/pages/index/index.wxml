@@ -1,29 +1,96 @@
-<!--index.wxml-->
+<van-toast id="van-toast" />
+
 <view class="container">
-  <view class="title">快速了解云开发</view>
-  <view class="top_tip">免鉴权接口调用 免部署后台 高并发</view>
-  <view class="power" wx:key="title" wx:for="{{powerList}}" wx:for-item="power">
-    <view class="power_info" data-index="{{index}}" data-type="{{ power.type }}" bindtap="onClickPowerInfo">
-      <view class="power_info_text">
-        <view class="power_info_text_title">
-          {{power.title}}
-          <view class="power_info_text_tag" wx:if="{{power.tag}}">{{power.tag}}</view>
-        </view>
-        <view class="power_info_text_tip">{{power.tip}}</view>
-      </view>
-      <image wx:if="{{!power.showItem && power.item.length}}" class="power_info_more" src="../../images/arrow.svg"></image>
-      <image wx:if="{{power.showItem && power.item.length}}" class="power_info_less" src="../../images/arrow.svg"></image>
-      <image wx:if="{{!power.item.length}}" class="power_item_icon" src="../../images/arrow.svg"></image>
-    </view>
-    <view wx:if="{{power.showItem}}">
-      <view wx:key="title" wx:for="{{power.item}}">
-        <view class="line"></view>
-        <view class="power_item" bindtap="jumpPage" data-type="{{ item.type }}" data-page="{{item.page}}">
-          <view class="power_item_title">{{item.title}}</view>
-          <image class="power_item_icon" src="../../images/arrow.svg"></image>
-        </view>
-      </view>
-    </view>
+  <view class="title">养老金计算器</view>
+  <view class="subtitle">基于“新人新办法”预测你的退休收入</view>
+
+  <van-cell-group inset>
+    <van-cell title="参保城市" value="{{ city }}" is-link bind:click="showCityPopup" />
+
+    <van-cell title="性别">
+      <van-radio-group value="{{ gender }}" direction="horizontal" bind:change="onGenderChange">
+        <van-radio name="male">男</van-radio>
+        <van-radio name="female">女</van-radio>
+      </van-radio-group>
+    </van-cell>
+
+    <van-field
+      label="当前年龄"
+      value="{{ age }}"
+      type="number"
+      placeholder="例如 30"
+      bind:change="onAgeChange"
+    />
+
+    <van-field
+      label="退休年龄"
+      value="{{ retireAge }}"
+      type="number"
+      placeholder="男60 / 女55"
+      bind:change="onRetireAgeChange"
+    />
+
+    <van-field
+      label="已缴年限"
+      value="{{ years }}"
+      type="number"
+      placeholder="例如 5"
+      right-icon="clock-o"
+      bind:change="onYearsChange"
+    />
+
+    <van-field
+      label="账户余额"
+      value="{{ balance }}"
+      type="number"
+      placeholder="个人账户当前余额"
+      left-icon="gold-coin-o"
+      bind:change="onBalanceChange"
+    />
+
+    <van-field
+      label="税前月薪"
+      value="{{ salary }}"
+      type="number"
+      placeholder="当前税前工资"
+      left-icon="balance-list-o"
+      bind:change="onSalaryChange"
+    />
+
+    <van-cell center title="开启涨薪预测 (年涨3%)">
+      <van-switch slot="right-icon" checked="{{ useGrowth }}" bind:change="onGrowthChange" size="24px" />
+    </van-cell>
+
+  </van-cell-group>
+
+  <view class="btn-area">
+    <van-button round block type="primary" size="large" bind:click="onSubmit">
+      开始计算
+    </van-button>
   </view>
-  <cloud-tip-modal showTipProps="{{showTip}}" title="{{title}}" content="{{content}}"></cloud-tip-modal>
+
+  <van-popup show="{{ showCity }}" position="bottom" custom-style="height: 40%;">
+    <van-picker
+      show-toolbar
+      title="选择城市"
+      columns="{{ cityColumns }}"
+      bind:cancel="onCityCancel"
+      bind:confirm="onCityConfirm"
+    />
+  </van-popup>
+
+  <view wx:if="{{ result }}" class="result-card">
+    <view class="result-title">
+      预估月领 ({{ useGrowth ? '含涨薪预测' : '保守估算' }})
+    </view>
+    <view class="result-amount">¥ {{ result.detail.total_pension }}</view>
+
+    <van-cell-group>
+      <van-cell title="基础养老金" value="¥ {{ result.detail.basic_pension }}" />
+      <van-cell title="个人账户养老金" value="¥ {{ result.detail.account_pension }}" />
+      <van-cell title="退休时账户余额" value="¥ {{ result.detail.final_balance }}" />
+      <van-cell title="缴费指数" value="{{ result.detail.avg_index }}" />
+    </van-cell-group>
+  </view>
+
 </view>

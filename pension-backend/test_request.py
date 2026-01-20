@@ -3,7 +3,7 @@ import requests
 import json
 
 # 1. 设定目标地址 (注意端口要和你 main.py 里的一致，这里假设是 5000)
-url = "http://127.0.0.1:5000/api/calculate"
+url = "https://pension-service-219415-6-1397084835.sh.run.tcloudbase.com/api/calculate"
 
 # 2. 准备模拟数据 (模拟一个用户输入)
 payload = {

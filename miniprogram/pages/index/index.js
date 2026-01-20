@@ -1,182 +1,111 @@
-// index.js
+import Toast from '@vant/weapp/toast/toast';
+
 Page({
   data: {
-    showTip: false,
-    powerList: [
-      {
-        title: "云托管",
-        tip: "不限语言的全托管容器服务",
-        showItem: false,
-        item: [
-          {
-            type: "cloudbaserun",
-            title: "云托管调用",
-          },
-        ],
-      },
-      {
-        title: "云函数",
-        tip: "安全、免鉴权运行业务代码",
-        showItem: false,
-        item: [
-          {
-            type: "getOpenId",
-            title: "获取OpenId",
-          },
-          {
-            type: "getMiniProgramCode",
-            title: "生成小程序码",
-          },
-        ],
-      },
-      {
-        title: "数据库",
-        tip: "安全稳定的文档型数据库",
-        showItem: false,
-        item: [
-          {
-            type: "createCollection",
-            title: "创建集合",
-          },
-          {
-            type: "selectRecord",
-            title: "增删改查记录",
-          },
-          // {
-          //   title: '聚合操作',
-          //   page: 'sumRecord',
-          // },
-        ],
-      },
-      {
-        title: "云存储",
-        tip: "自带CDN加速文件存储",
-        showItem: false,
-        item: [
-          {
-            type: "uploadFile",
-            title: "上传文件",
-          },
-        ],
-      },
-      {
-        title: "AI 接入能力",
-        tip: "云开发 AI 接入能力",
-        showItem: false,
-        item: [
-          {
-            type: "model-guide",
-            title: "大模型对话指引",
-          },
-        ],
-      },
-      {
-        title: "AI 智能开发小程序",
-        tip: "连接 AI 开发工具与 MCP 开发小程序",
-        type: "ai-assistant",
-        showItem: false,
-        item: [],
-      },
-    ],
-    haveCreateCollection: false,
-    title: "",
-    content: "",
-  },
-  onClickPowerInfo(e) {
-    const app = getApp();
-    if (!app.globalData.env) {
-      wx.showModal({
-        title: "提示",
-        content: "请在 `miniprogram/app.js` 中正确配置 `env` 参数",
-      });
-      return;
-    }
-    const index = e.currentTarget.dataset.index;
-    const powerList = this.data.powerList;
-    const selectedItem = powerList[index];
-    if (selectedItem.link) {
-      wx.navigateTo({
-        url: `../web/index?url=${selectedItem.link}&title=${selectedItem.title}`,
-      });
-    } else if (selectedItem.type) {
-      wx.navigateTo({
-        url: `/pages/example/index?envId=${this.data.selectedEnv?.envId}&type=${selectedItem.type}`,
-      });
-    } else if (selectedItem.page) {
-      wx.navigateTo({
-        url: `/pages/${selectedItem.page}/index`,
-      });
-    } else if (
-      selectedItem.title === "数据库" &&
-      !this.data.haveCreateCollection
-    ) {
-      this.onClickDatabase(powerList, selectedItem);
-    } else {
-      selectedItem.showItem = !selectedItem.showItem;
-      this.setData({
-        powerList,
-      });
-    }
+    // 基础数据
+    city: '北京',
+    gender: 'male',
+    age: 30,
+    retireAge: 60, // 默认男性退休年龄
+    years: 5,
+    balance: 50000,
+    salary: 20000,
+
+    // 🌟 新增状态：是否开启涨薪预测
+    useGrowth: false,
+
+    // UI控制
+    showCity: false,
+    cityColumns: ['北京', '上海', '广州', '深圳'],
+    result: null
   },
 
-  jumpPage(e) {
-    const { type, page } = e.currentTarget.dataset;
-    console.log("jump page", type, page);
-    if (type) {
-      wx.navigateTo({
-        url: `/pages/example/index?envId=${this.data.selectedEnv?.envId}&type=${type}`,
-      });
-    } else {
-      wx.navigateTo({
-        url: `/pages/${page}/index?envId=${this.data.selectedEnv?.envId}`,
-      });
-    }
-  },
+  // --- 事件处理 ---
 
-  onClickDatabase(powerList, selectedItem) {
-    wx.showLoading({
-      title: "",
+  // 1. 性别变化时，自动联动退休年龄 (优化体验)
+  onGenderChange(event) {
+    const gender = event.detail;
+    let newRetireAge = 60;
+
+    if (gender === 'female') {
+      newRetireAge = 55; // 女性默认55 (折中方案)
+    }
+
+    this.setData({
+      gender: gender,
+      retireAge: newRetireAge
     });
-    wx.cloud
-      .callFunction({
-        name: "quickstartFunctions",
-        data: {
-          type: "createCollection",
-        },
-      })
-      .then((resp) => {
-        if (resp.result.success) {
-          this.setData({
-            haveCreateCollection: true,
-          });
-        }
-        selectedItem.showItem = !selectedItem.showItem;
-        this.setData({
-          powerList,
-        });
-        wx.hideLoading();
-      })
-      .catch((e) => {
-        wx.hideLoading();
-        const { errCode, errMsg } = e;
-        if (errMsg.includes("Environment not found")) {
-          this.setData({
-            showTip: true,
-            title: "云开发环境未找到",
-            content:
-              "如果已经开通云开发，请检查环境ID与 `miniprogram/app.js` 中的 `env` 参数是否一致。",
-          });
-          return;
-        }
-        if (errMsg.includes("FunctionName parameter could not be found")) {
-          this.setData({
-            showTip: true,
-            title: "请上传云函数",
-            content:
-              "在'cloudfunctions/quickstartFunctions'目录右键，选择【上传并部署-云端安装依赖】，等待云函数上传完成后重试。",
-          });
-          return;
-        }
-      });
   },
+
+  // 2. 基础输入绑定
+  onAgeChange(event) { this.setData({ age: Number(event.detail) }); },
+  onRetireAgeChange(event) { this.setData({ retireAge: Number(event.detail) }); },
+  onYearsChange(event) { this.setData({ years: Number(event.detail) }); },
+  onBalanceChange(event) { this.setData({ balance: Number(event.detail) }); },
+  onSalaryChange(event) { this.setData({ salary: Number(event.detail) }); },
+
+  // 3. 🌟 涨薪开关切换
+  onGrowthChange({ detail }) {
+    this.setData({ useGrowth: detail });
+  },
+
+  // 4. 城市选择器逻辑
+  showCityPopup() { this.setData({ showCity: true }); },
+  onCityCancel() { this.setData({ showCity: false }); },
+  onCityConfirm(event) {
+    const { value } = event.detail;
+    this.setData({ city: value, showCity: false });
+  },
+
+  // --- 核心提交逻辑 ---
+  onSubmit() {
+    Toast.loading({
+      message: '正在精算中...',
+      forbidClick: true,
+      duration: 0
+    });
+
+    // 构造请求包 (注意：这里不再传 gender，因为后端算法已经解耦)
+    const payload = {
+      city: this.data.city,
+      age: this.data.age,
+      retire_age: this.data.retireAge,
+      years: this.data.years,
+      balance: this.data.balance,
+      salary: this.data.salary,
+      // 🌟 传给后端的增长率：开启则3%，关闭则0
+      wage_growth: this.data.useGrowth ? 0.03 : 0
+    };
+
+    // 调用云托管接口
+    wx.cloud.callContainer({
+      config: {
+        env: 'prod-6gowvdzt4f684534' // 🔴 确保这里是你的环境ID
+      },
+      path: '/api/calculate',
+      header: {
+        'X-WX-SERVICE': 'pension-service',
+        'content-type': 'application/json'
+      },
+      method: 'POST',
+      data: payload,
+      success: (res) => {
+        Toast.clear();
+        console.log('计算成功', res);
+
+        if (res.data && res.data.code === 0) {
+          this.setData({ result: res.data.data });
+          // 滚动页面到底部查看结果
+          wx.pageScrollTo({ scrollTop: 1000, duration: 300 });
+        } else {
+          Toast.fail(res.data.error || '计算出错');
+        }
+      },
+      fail: (err) => {
+        Toast.clear();
+        console.error(err);
+        Toast.fail('网络请求失败');
+      }
+    });
+  }
 });
