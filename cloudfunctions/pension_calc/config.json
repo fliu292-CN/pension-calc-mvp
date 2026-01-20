@@ -1,0 +1,6 @@
+{
+  "runtime": "python3.9",
+  "handler": "index.main_handler",
+  "memory": 128,
+  "timeout": 5
+}
