@@ -8,7 +8,7 @@ WORKDIR /app
 COPY requirements.txt .
 
 # 2. 安装依赖 (使用清华源加速，虽然云端通常很快，但为了保险)
-RUN pip install --no-cache-dir -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+RUN pip install --no-cache-dir -r requirements.txt -i https://mirrors.cloud.tencent.com/pypi/simple
 
 # 3. 复制所有代码文件到容器中
 COPY . .
