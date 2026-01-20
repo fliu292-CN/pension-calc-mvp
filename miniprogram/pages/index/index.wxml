@@ -35,8 +35,9 @@
       value="{{ years }}"
       type="number"
       placeholder="例如 5"
-      right-icon="clock-o"
+      right-icon="question-o"
       bind:change="onYearsChange"
+      bind:click-icon="onShowYearsHelp"
     />
 
     <van-field
