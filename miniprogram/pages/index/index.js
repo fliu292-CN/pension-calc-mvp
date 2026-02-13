@@ -58,7 +58,7 @@ Page({
       Toast.fail('请填写完整信息');
       return;
     }
-    Toast.loading({ message: '正在精算...', forbidClick: true, duration: 500 });
+    Toast.loading({ message: '正在估算...', forbidClick: true, duration: 500 });
 
     const payload = {
       city: this.data.city,
@@ -110,5 +110,25 @@ Page({
     const p5 = `到退休时，您的个人账户总额预计达到 ${detail.final_balance} 元。根据国家标准，${params.retireAge} 岁退休对应的计发月数为 ${factors.dividingMonths} 个月。因此，您的【个人账户养老金】预估为：${detail.final_balance} ÷ ${factors.dividingMonths} = ${detail.account_pension} 元。`;
     const summary = `【总结】基础养老金 (${detail.basic_pension}) + 个人账户养老金 (${detail.account_pension}) = 总月领金额 ${detail.total_pension} 元。`;
     return [p1, p2, p3, p4, p5, summary];
+  },
+
+  /**
+   * 🌟 用户点击右上角分享给朋友
+   */
+  onShareAppMessage() {
+    return {
+      title: '我的退休金能领多少？试试养老金估算工具',
+      path: '/pages/index/index'
+    };
+  },
+
+  /**
+   * 🌟 用户分享到朋友圈
+   */
+  onShareTimeline() {
+    return {
+      title: '我的退休金能领多少？试试养老金估算工具',
+      query: ''
+    };
   }
 });

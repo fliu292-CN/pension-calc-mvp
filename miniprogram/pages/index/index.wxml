@@ -106,7 +106,7 @@
 
     <!-- 🌟 新增：计算过程叙事 -->
     <view class="process-box">
-      <view class="process-title">精算结果解读</view>
+      <view class="process-title">估算结果解读</view>
       <view class="process-content">
         <block wx:for="{{ processText }}" wx:key="index">
           <view class="process-p">{{ item }}</view>
@@ -116,7 +116,7 @@
 
     <!-- 🌟 新增：核心公式展示 -->
     <view class="formula-box">
-      <view class="formula-title">精算公式说明</view>
+      <view class="formula-title">估算公式说明</view>
       <view class="formula-item">
         <text class="formula-label">基础养老金 =</text>
         <text class="formula-val">(退休时计发基数 + 本人指数化月薪) ÷ 2 × 缴费年限 × 1%</text>
