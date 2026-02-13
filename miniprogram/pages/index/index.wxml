@@ -132,7 +132,7 @@
     </van-button>
   </view>
 
-  <view style="margin: 20px 20px 30px; text-align: center; color: #ccc; font-size: 12px; line-height: 1.5;">
+  <view class="disclaimer">
     免责声明：本工具计算结果仅供参考，不作为官方社保核算依据。<br/>
     实际金额请以当地社保局核算为准。
   </view>

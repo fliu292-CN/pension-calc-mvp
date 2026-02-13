@@ -1,7 +1,14 @@
 /* 页面背景 */
 page {
-  background-color: #f7f8fa; /* 浅灰底色，突显卡片 */
+  background-color: #f7f8fa;
   padding-bottom: 50px;
+  /* 🌟 全局提升基础字体大小 */
+  font-size: 16px;
+}
+
+/* 🌟 覆盖 Vant 组件默认字体大小 */
+.van-cell, .van-field__input, .van-cell__title, .van-cell__value {
+  font-size: 16px !important;
 }
 
 .container {
@@ -11,29 +18,26 @@ page {
 /* 标题样式 */
 .title {
   text-align: center;
-  font-size: 24px;
+  font-size: 28px; /* 24 -> 28 */
   font-weight: bold;
   color: #333;
-  margin-bottom: 5px;
+  margin-bottom: 8px;
 }
 
 .subtitle {
   text-align: center;
-  font-size: 14px;
-  color: #999;
-  margin-bottom: 20px;
+  font-size: 16px; /* 14 -> 16 */
+  color: #666; /* 稍微加深一点颜色 */
+  margin-bottom: 25px;
 }
 
-/* 🌟 修复按钮样式：强制 100% 宽度 */
+/* 按钮样式 */
 .btn-area {
   margin: 30px 16px;
-  display: block;
-  width: auto; /* 自动填满容器 */
 }
 
-/* 这是一个补充保险，强制 van-button 内部撑开 */
-.van-button--block {
-  width: 100% !important;
+.van-button--large {
+  font-size: 18px !important; /* 增大按钮文字 */
 }
 
 /* 结果卡片 */
@@ -41,87 +45,89 @@ page {
   margin: 20px 16px;
   background: white;
   border-radius: 12px;
-  padding: 20px;
-  /* 柔和的阴影 */
+  padding: 25px 20px;
   box-shadow: 0 8px 16px rgba(0,0,0,0.05);
   text-align: center;
-  overflow: hidden; /* 防止子元素溢出圆角 */
 }
 
 .result-title {
-  font-size: 14px;
+  font-size: 16px; /* 14 -> 16 */
   color: #666;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
 
 .result-amount {
-  font-size: 40px; /* 更大的数字 */
+  font-size: 48px; /* 40 -> 48 */
   font-weight: 800;
-  color: #07c160; /* 微信标志绿 */
-  margin-bottom: 20px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, sans-serif;
+  color: #07c160;
+  margin-bottom: 25px;
 }
 
 /* 计算过程推导 */
 .process-box {
-  margin-top: 25px;
+  margin-top: 30px;
   text-align: left;
   background-color: #fcfcfc;
-  padding: 15px;
+  padding: 20px 15px;
   border-radius: 8px;
-  border-left: 4px solid #1989fa;
+  border-left: 5px solid #1989fa;
 }
 
 .process-title {
-  font-size: 16px;
+  font-size: 18px; /* 16 -> 18 */
   font-weight: bold;
   color: #1989fa;
-  margin-bottom: 12px;
+  margin-bottom: 15px;
 }
 
 .process-p {
-  font-size: 13px;
-  color: #444;
+  font-size: 15px; /* 13 -> 15 */
+  color: #333; /* 文字加深 */
   line-height: 1.8;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 }
 
 /* 公式展示 */
 .formula-box {
-  margin-top: 20px;
-  text-align: left;
+  margin-top: 25px;
+  padding-top: 20px;
   border-top: 1px dashed #eee;
-  padding-top: 15px;
 }
 
 .formula-title {
-  font-size: 14px;
+  font-size: 16px; /* 14 -> 16 */
   font-weight: bold;
   color: #666;
-  margin-bottom: 10px;
-}
-
-.formula-item {
-  margin-bottom: 8px;
+  margin-bottom: 15px;
 }
 
 .formula-label {
   display: block;
-  font-size: 12px;
+  font-size: 14px; /* 12 -> 14 */
   color: #999;
-  margin-bottom: 2px;
+  margin-bottom: 5px;
 }
 
 .formula-val {
   display: block;
-  font-size: 12px;
-  color: #666;
+  font-size: 14px; /* 12 -> 14 */
+  color: #444;
   background: #f5f5f5;
-  padding: 6px;
-  border-radius: 4px;
+  padding: 10px;
+  border-radius: 6px;
+  line-height: 1.5;
 }
 
 .feedback-area {
-  margin-top: 30px;
+  margin-top: 40px;
   text-align: center;
+}
+
+/* 免责声明样式 */
+.disclaimer {
+  margin: 30px 20px 40px;
+  text-align: center;
+  color: #bbb;
+  font-size: 14px; /* 12 -> 14 */
+  line-height: 1.6;
 }
