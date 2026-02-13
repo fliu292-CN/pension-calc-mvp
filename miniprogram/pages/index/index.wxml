@@ -70,11 +70,19 @@
     </van-button>
   </view>
 
-  <van-popup show="{{ showCity }}" position="bottom" custom-style="height: 40%;">
+  <van-popup
+    show="{{ showCity }}"
+    position="bottom"
+    round
+    bind:close="onCityCancel"
+  >
     <van-picker
+      wx:if="{{ showCity }}"
       show-toolbar
-      title="选择城市"
+      title="选择地区"
       columns="{{ cityColumns }}"
+      default-index="{{ defaultCityIndex }}"
+      visible-item-count="{{ 5 }}"
       bind:cancel="onCityCancel"
       bind:confirm="onCityConfirm"
     />
@@ -92,6 +100,41 @@
       <van-cell title="退休时账户余额" value="¥ {{ result.detail.final_balance }}" />
       <van-cell title="缴费指数" value="{{ result.detail.avg_index }}" />
     </van-cell-group>
+
+    <!-- 🌟 新增：计算过程叙事 -->
+    <view class="process-box">
+      <view class="process-title">计算过程推导</view>
+      <view class="process-content">
+        <block wx:for="{{ processText }}" wx:key="index">
+          <view class="process-p">{{ item }}</view>
+        </block>
+      </view>
+    </view>
+
+    <!-- 🌟 新增：核心公式展示 -->
+    <view class="formula-box">
+      <view class="formula-title">精算公式说明</view>
+      <view class="formula-item">
+        <text class="formula-label">基础养老金 =</text>
+        <text class="formula-val">(退休时计发基数 + 本人指数化月薪) ÷ 2 × 缴费年限 × 1%</text>
+      </view>
+      <view class="formula-item">
+        <text class="formula-label">个人账户养老金 =</text>
+        <text class="formula-val">个人账户存储额 ÷ 计发月数</text>
+      </view>
+    </view>
+
+  </view>
+
+  <view class="feedback-area">
+    <van-button open-type="feedback" icon="edit" plain hairline type="default" size="small" round>
+      意见反馈
+    </van-button>
+  </view>
+
+  <view style="margin: 20px 20px 30px; text-align: center; color: #ccc; font-size: 12px; line-height: 1.5;">
+    免责声明：本工具计算结果仅供参考，不作为官方社保核算依据。<br/>
+    实际金额请以当地社保局核算为准。
   </view>
 
 </view>

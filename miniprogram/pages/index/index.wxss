@@ -61,3 +61,67 @@ page {
   margin-bottom: 20px;
   font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, sans-serif;
 }
+
+/* 计算过程推导 */
+.process-box {
+  margin-top: 25px;
+  text-align: left;
+  background-color: #fcfcfc;
+  padding: 15px;
+  border-radius: 8px;
+  border-left: 4px solid #1989fa;
+}
+
+.process-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: #1989fa;
+  margin-bottom: 12px;
+}
+
+.process-p {
+  font-size: 13px;
+  color: #444;
+  line-height: 1.8;
+  margin-bottom: 10px;
+}
+
+/* 公式展示 */
+.formula-box {
+  margin-top: 20px;
+  text-align: left;
+  border-top: 1px dashed #eee;
+  padding-top: 15px;
+}
+
+.formula-title {
+  font-size: 14px;
+  font-weight: bold;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.formula-item {
+  margin-bottom: 8px;
+}
+
+.formula-label {
+  display: block;
+  font-size: 12px;
+  color: #999;
+  margin-bottom: 2px;
+}
+
+.formula-val {
+  display: block;
+  font-size: 12px;
+  color: #666;
+  background: #f5f5f5;
+  padding: 6px;
+  border-radius: 4px;
+}
+
+.feedback-area {
+  margin-top: 30px;
+  text-align: center;
+}

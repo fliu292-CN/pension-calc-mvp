@@ -64,3 +64,28 @@ page {
   margin-bottom: 24px;
   font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, sans-serif;
 }
+
+/* 🌟 解读盒子样式 */
+.analysis-box {
+  margin-top: 20px;
+  background-color: #f8fcfc; /* 极淡的背景色 */
+  border-radius: 8px;
+  padding: 16px;
+  text-align: left; /* 文字左对齐，易于阅读 */
+  border: 1px solid #ebedf0;
+}
+
+.analysis-header {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+}
+
+.analysis-content {
+  font-size: 13px;
+  color: #666;
+  line-height: 1.6; /* 增加行高，读起来不累 */
+  text-align: justify; /* 两端对齐 */
+}

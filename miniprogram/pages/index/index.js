@@ -1,113 +1,101 @@
 import Toast from '@vant/weapp/toast/toast';
+import { calculatePension, REGION_CONFIG } from '../../utils/pension.js';
 
 Page({
   data: {
+    // ... 原有的数据不变 ...
     city: '北京',
-    gender: 'male',
-    // 初始值给数字，但允许输入时变为空字符串
+    gender: 'female',
     age: 30,
-    retireAge: 60,
+    retireAge: 50,
     years: 5,
     balance: 50000,
     salary: 20000,
     useGrowth: false,
 
     showCity: false,
-    cityColumns: ['北京', '上海', '广州', '深圳'],
+    cityColumns: [
+      '北京', '上海', '天津', '重庆',
+      '深圳', '大连', '宁波', '厦门', '青岛',
+      '广东', '江苏', '浙江', '山东', '四川', '湖北', '福建', '湖南', '安徽', '河南', '河北', '辽宁', '陕西', '江西', '广西', '贵州', '云南', '内蒙古', '山西', '吉林', '黑龙江', '甘肃', '宁夏', '青海', '新疆', '海南'
+    ],
+    defaultCityIndex: 0, 
+
     result: null
   },
 
-  // --- 输入事件 (修复 NaN 问题：直接存字符串，不强转数字) ---
-  onAgeChange(event) { this.setData({ age: event.detail }); },
-  onRetireAgeChange(event) { this.setData({ retireAge: event.detail }); },
-  onYearsChange(event) { this.setData({ years: event.detail }); },
-  onBalanceChange(event) { this.setData({ balance: event.detail }); },
-  onSalaryChange(event) { this.setData({ salary: event.detail }); },
-
-  // --- 交互逻辑 ---
-  onGenderChange(event) {
-    const gender = event.detail;
-    this.setData({
-      gender: gender,
-      retireAge: gender === 'female' ? 55 : 60
+  // ... 
+  showCityPopup() {
+    const currentIndex = this.data.cityColumns.indexOf(this.data.city);
+    this.setData({ 
+      showCity: true,
+      defaultCityIndex: currentIndex >= 0 ? currentIndex : 0
     });
   },
-
-  onGrowthChange({ detail }) {
-    this.setData({ useGrowth: detail });
-  },
-
-  // 帮助弹窗
-  onShowYearsHelp() {
-    wx.showModal({
-      title: '已缴年限说明',
-      content: '指您实际已经缴纳社保的累计年数（含视同缴费年限）。如果不确定，可以查询“个人所得税”App或当地社保局。',
-      showCancel: false,
-      confirmText: '知道了',
-      confirmColor: '#07c160'
-    });
-  },
-
-  // 城市选择器
-  showCityPopup() { this.setData({ showCity: true }); },
   onCityCancel() { this.setData({ showCity: false }); },
   onCityConfirm(event) {
     const { value } = event.detail;
     this.setData({ city: value, showCity: false });
   },
 
-  // --- 提交计算 ---
+  onAgeChange(event) { this.setData({ age: event.detail }); },
+  onRetireAgeChange(event) { this.setData({ retireAge: event.detail }); },
+  onYearsChange(event) { this.setData({ years: event.detail }); },
+  onBalanceChange(event) { this.setData({ balance: event.detail }); },
+  onSalaryChange(event) { this.setData({ salary: event.detail }); },
+  onGenderChange(event) {
+    const gender = event.detail;
+    this.setData({ gender: gender, retireAge: gender === 'female' ? 55 : 60 });
+  },
+  onGrowthChange({ detail }) { this.setData({ useGrowth: detail }); },
+  onShowYearsHelp() {
+    wx.showModal({ title: '说明', content: '含视同缴费年限...', showCancel: false });
+  },
+
+  // --- 提交函数 ---
   onSubmit() {
-    // 校验：如果为空则提示
     if (this.data.age === '' || this.data.salary === '') {
       Toast.fail('请填写完整信息');
       return;
     }
+    Toast.loading({ message: '正在精算...', forbidClick: true, duration: 500 });
 
-    Toast.loading({
-      message: '正在精算...',
-      forbidClick: true,
-      duration: 0
-    });
-
-    // 🌟 构造数据包 (在这里统一转成数字)
     const payload = {
       city: this.data.city,
       gender: this.data.gender,
       age: Number(this.data.age),
-      retire_age: Number(this.data.retireAge),
+      retireAge: Number(this.data.retireAge),
       years: Number(this.data.years),
       balance: Number(this.data.balance),
       salary: Number(this.data.salary),
-      wage_growth: this.data.useGrowth ? 0.03 : 0
+      wageGrowth: this.data.useGrowth ? 0.03 : 0
     };
 
-    wx.cloud.callContainer({
-      config: {
-        env: 'prod-6gowvdzt4f684534' // 你的环境ID
-      },
-      path: '/api/calculate',
-      header: {
-        'X-WX-SERVICE': 'pension-service',
-        'content-type': 'application/json'
-      },
-      method: 'POST',
-      data: payload,
-      success: (res) => {
-        Toast.clear();
-        if (res.data && res.data.code === 0) {
-          this.setData({ result: res.data.data });
-          // 滚动到底部
-          wx.pageScrollTo({ scrollTop: 1000, duration: 300 });
-        } else {
-          Toast.fail(res.data.error || '计算出错');
-        }
-      },
-      fail: (err) => {
-        Toast.clear();
-        console.error(err);
-        Toast.fail('网络请求失败');
-      }
-    });
+    const res = calculatePension(payload);
+
+    if (res.code === 0) {
+      const data = res.data;
+      const processText = this.generateProcessText(data);
+
+      this.setData({
+        result: data,
+        processText: processText
+      });
+
+      wx.pageScrollTo({ scrollTop: 1000, duration: 300 });
+    } else {
+      Toast.fail(res.error || '计算出错');
+    }
+  },
+
+  generateProcessText(res) {
+    const { params, factors, detail } = res;
+    const p1 = `您今年 ${params.age} 岁，所在省份/城市目前的平均养老金计发基数（可理解为平均工资）为 ${factors.baseSalary} 元。`;
+    const p2 = `您计划在 ${params.retireAge} 岁退休，距离现在还有 ${factors.yearsToWork} 年。按基数每年增长 ${(params.baseGrowth * 100).toFixed(0)}% 预测，您退休时该地区的计发基数将达到约 ${factors.futureBaseSalary.toFixed(2)} 元。`;
+    const p3 = `您当前的月薪为 ${params.salary} 元，据此估算出您的平均缴费指数为 ${factors.avgIndex.toFixed(2)}。到退休时，您的累计缴费年限将达到 ${factors.totalYears} 年。根据公式，您的【基础养老金】预估为：${factors.futureBaseSalary.toFixed(2)} × (1 + ${factors.avgIndex.toFixed(2)}) ÷ 2 × ${factors.totalYears} × 1% = ${detail.basic_pension} 元。`;
+    const p4 = `您现在的个人账户余额为 ${params.balance} 元。在未来的 ${factors.yearsToWork} 年里，按现有缴费水平，您的账户还将累计存入约 ${factors.futureContribution.toFixed(2)} 元。`;
+    const p5 = `到退休时，您的个人账户总额预计达到 ${detail.final_balance} 元。根据国家标准，${params.retireAge} 岁退休对应的计发月数为 ${factors.dividingMonths} 个月。因此，您的【个人账户养老金】预估为：${detail.final_balance} ÷ ${factors.dividingMonths} = ${detail.account_pension} 元。`;
+    const summary = `【总结】基础养老金 (${detail.basic_pension}) + 个人账户养老金 (${detail.account_pension}) = 总月领金额 ${detail.total_pension} 元。`;
+    return [p1, p2, p3, p4, p5, summary];
   }
 });
