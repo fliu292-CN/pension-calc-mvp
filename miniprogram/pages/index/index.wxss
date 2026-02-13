@@ -176,3 +176,18 @@ page {
   font-size: 13px;
   line-height: 1.8;
 }
+
+/* 🌟 放大选择器滚轮中的文字 */
+.van-picker-column__item {
+  font-size: 22px !important; /* 18 -> 22 */
+  color: #333 !important;
+}
+
+.van-picker__toolbar {
+  height: 60px !important; /* 50 -> 60 */
+  line-height: 60px !important;
+}
+
+.van-picker__confirm, .van-picker__cancel {
+  font-size: 18px !important; /* 16 -> 18 */
+}
