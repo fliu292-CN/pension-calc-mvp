@@ -46,18 +46,23 @@ page {
 
 /* 按钮区域 */
 .btn-area {
-  margin: 25px 16px;
+  margin: 35px 40px; /* 🌟 增加左右边距（16->40），让按钮变短，显得更精致 */
 }
 
 .van-button--primary {
   background: #1989fa !important;
   border: none !important;
-  box-shadow: 0 6px 15px rgba(25, 137, 250, 0.3);
+  box-shadow: 0 8px 20px rgba(25, 137, 250, 0.2); /* 更淡更柔和的阴影 */
+  border-radius: 10px !important; /* 稍微增加一点弧度 */
+  /* 🌟 极简字重，增加上下空间 */
+  height: 60px !important; 
+  line-height: 60px !important;
+  font-weight: 400 !important; 
+  letter-spacing: 3px; /* 增加字间距，显得更舒展 */
 }
 
 .van-button--large {
-  font-size: 18px !important;
-  height: 54px !important;
+  font-size: 19px !important; /* 稍微调小一点，比例更协调 */
 }
 
 /* 🌟 结果卡片视觉重构 */

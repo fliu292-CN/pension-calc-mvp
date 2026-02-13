@@ -67,7 +67,7 @@
   </van-cell-group>
 
   <view class="btn-area">
-    <van-button round block type="primary" size="large" bind:click="onSubmit">
+    <van-button block type="primary" size="large" bind:click="onSubmit">
       开始计算
     </van-button>
   </view>
