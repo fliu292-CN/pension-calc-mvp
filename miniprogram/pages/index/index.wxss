@@ -1,88 +1,129 @@
 /* 页面背景 */
 page {
-  background-color: #f7f8fa;
+  /* 🌟 使用更有质感的蓝灰色背景，增加对比 */
+  background-color: #f0f2f5;
   padding-bottom: 50px;
-  /* 🌟 全局提升基础字体大小 */
   font-size: 16px;
 }
 
-/* 🌟 覆盖 Vant 组件默认字体大小 */
+/* 🌟 顶部品牌区域 */
+.page-header {
+  background: linear-gradient(180deg, #1989fa 0%, #0570e1 100%);
+  padding: 40px 20px 60px;
+  text-align: center;
+  color: white;
+}
+
+.page-header .title {
+  font-size: 30px;
+  font-weight: 800;
+  margin-bottom: 10px;
+  letter-spacing: 1px;
+}
+
+.page-header .subtitle {
+  font-size: 15px;
+  opacity: 0.9;
+  font-weight: 300;
+}
+
+/* 容器负外边距，让卡片嵌入页眉 */
+.container {
+  margin-top: -30px;
+  padding: 0 0 20px;
+}
+
+/* 🌟 输入卡片增强 */
+.input-card {
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08) !important;
+  border-radius: 16px !important;
+  overflow: hidden;
+}
+
 .van-cell, .van-field__input, .van-cell__title, .van-cell__value {
   font-size: 16px !important;
 }
 
-.container {
-  padding: 20px 0;
-}
-
-/* 标题样式 */
-.title {
-  text-align: center;
-  font-size: 28px; /* 24 -> 28 */
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 8px;
-}
-
-.subtitle {
-  text-align: center;
-  font-size: 16px; /* 14 -> 16 */
-  color: #666; /* 稍微加深一点颜色 */
-  margin-bottom: 25px;
-}
-
-/* 按钮样式 */
+/* 按钮区域 */
 .btn-area {
-  margin: 30px 16px;
+  margin: 25px 16px;
+}
+
+.van-button--primary {
+  background: #1989fa !important;
+  border: none !important;
+  box-shadow: 0 6px 15px rgba(25, 137, 250, 0.3);
 }
 
 .van-button--large {
-  font-size: 18px !important; /* 增大按钮文字 */
+  font-size: 18px !important;
+  height: 54px !important;
 }
 
-/* 结果卡片 */
+/* 🌟 结果卡片视觉重构 */
 .result-card {
   margin: 20px 16px;
   background: white;
-  border-radius: 12px;
-  padding: 25px 20px;
-  box-shadow: 0 8px 16px rgba(0,0,0,0.05);
+  border-radius: 16px;
+  padding: 30px 20px;
+  box-shadow: 0 12px 30px rgba(25, 137, 250, 0.12); /* 蓝色投影 */
   text-align: center;
+  position: relative;
+  border: 1px solid rgba(25, 137, 250, 0.1);
 }
 
 .result-title {
-  font-size: 16px; /* 14 -> 16 */
+  font-size: 16px;
   color: #666;
-  margin-bottom: 12px;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.result-title::before, .result-title::after {
+  content: "";
+  width: 20px;
+  height: 1px;
+  background: #ddd;
+  margin: 0 10px;
 }
 
 .result-amount {
-  font-size: 48px; /* 40 -> 48 */
-  font-weight: 800;
-  color: #07c160;
+  font-size: 52px;
+  font-weight: 900;
+  color: #1989fa; /* 绿色 -> 蓝色 */
   margin-bottom: 25px;
+  text-shadow: 0 2px 10px rgba(25, 137, 250, 0.1);
 }
 
 /* 计算过程推导 */
 .process-box {
   margin-top: 30px;
   text-align: left;
-  background-color: #fcfcfc;
-  padding: 20px 15px;
-  border-radius: 8px;
-  border-left: 5px solid #1989fa;
+  background-color: #f8fbff; /* 浅蓝底色 */
+  padding: 20px 18px;
+  border-radius: 12px;
+  border-left: 6px solid #1989fa;
 }
 
 .process-title {
-  font-size: 18px; /* 16 -> 18 */
+  font-size: 18px;
   font-weight: bold;
   color: #1989fa;
   margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+}
+
+.process-title::before {
+  content: "📝";
+  margin-right: 8px;
 }
 
 .process-p {
-  font-size: 15px; /* 13 -> 15 */
-  color: #333; /* 文字加深 */
+  font-size: 15px;
+  color: #2c3e50;
   line-height: 1.8;
   margin-bottom: 15px;
 }
@@ -91,31 +132,31 @@ page {
 .formula-box {
   margin-top: 25px;
   padding-top: 20px;
-  border-top: 1px dashed #eee;
+  border-top: 1px dashed #ced6e0;
 }
 
 .formula-title {
-  font-size: 16px; /* 14 -> 16 */
+  font-size: 15px;
   font-weight: bold;
-  color: #666;
+  color: #57606f;
   margin-bottom: 15px;
 }
 
 .formula-label {
   display: block;
-  font-size: 14px; /* 12 -> 14 */
-  color: #999;
-  margin-bottom: 5px;
+  font-size: 13px;
+  color: #747d8c;
+  margin-bottom: 6px;
 }
 
 .formula-val {
   display: block;
-  font-size: 14px; /* 12 -> 14 */
-  color: #444;
-  background: #f5f5f5;
-  padding: 10px;
-  border-radius: 6px;
-  line-height: 1.5;
+  font-size: 13px;
+  color: #2f3542;
+  background: #f1f2f6;
+  padding: 12px;
+  border-radius: 8px;
+  line-height: 1.6;
 }
 
 .feedback-area {
@@ -123,11 +164,10 @@ page {
   text-align: center;
 }
 
-/* 免责声明样式 */
 .disclaimer {
   margin: 30px 20px 40px;
   text-align: center;
-  color: #bbb;
-  font-size: 14px; /* 12 -> 14 */
-  line-height: 1.6;
+  color: #a4b0be;
+  font-size: 13px;
+  line-height: 1.8;
 }

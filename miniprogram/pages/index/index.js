@@ -82,7 +82,20 @@ Page({
         processText: processText
       });
 
-      wx.pageScrollTo({ scrollTop: 1000, duration: 300 });
+      // 🌟 精准滚动：让结果卡片顶部对齐屏幕
+      wx.nextTick(() => {
+        wx.createSelectorQuery()
+          .select('#result-section')
+          .boundingClientRect(rect => {
+            if (rect) {
+              wx.pageScrollTo({
+                scrollTop: rect.top - 20, // 预留 20px 边距，不顶死
+                duration: 300
+              });
+            }
+          })
+          .exec();
+      });
     } else {
       Toast.fail(res.error || '计算出错');
     }

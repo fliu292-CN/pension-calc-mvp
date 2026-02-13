@@ -1,10 +1,12 @@
 <van-toast id="van-toast" />
 
-<view class="container">
+<view class="page-header">
   <view class="title">养老金计算器</view>
-  <view class="subtitle">基于“新人新办法”预测你的退休收入</view>
+  <view class="subtitle">全国省市最新基数 · 叙叙推演精算</view>
+</view>
 
-  <van-cell-group inset>
+<view class="container">
+  <van-cell-group inset custom-class="input-card">
     <van-cell title="参保城市" value="{{ city }}" is-link bind:click="showCityPopup" />
 
     <van-cell title="性别">
@@ -88,7 +90,7 @@
     />
   </van-popup>
 
-  <view wx:if="{{ result }}" class="result-card">
+  <view wx:if="{{ result }}" class="result-card" id="result-section">
     <view class="result-title">
       预估月领 ({{ useGrowth ? '含涨薪预测' : '保守估算' }})
     </view>
@@ -103,7 +105,7 @@
 
     <!-- 🌟 新增：计算过程叙事 -->
     <view class="process-box">
-      <view class="process-title">计算过程推导</view>
+      <view class="process-title">精算结果解读</view>
       <view class="process-content">
         <block wx:for="{{ processText }}" wx:key="index">
           <view class="process-p">{{ item }}</view>
