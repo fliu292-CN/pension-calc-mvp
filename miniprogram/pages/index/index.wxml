@@ -1,143 +1,142 @@
+<page-meta page-style="overflow: {{ showCity ? 'hidden' : 'visible' }}" />
+
 <van-toast id="van-toast" />
 
-<view class="page-header">
-  <view class="title">养老金计算器</view>
-  <view class="subtitle">全国省市最新基数 · 叙叙推演精算</view>
+<view class="page-wrapper {{ isLyingFlat ? 'theme-orange' : 'theme-indigo' }}">
+  <!-- 背景色块 -->
+  <view class="bg-layer"></view>
+  
+  <view class="content-layer">
+    <!-- 头部区域 -->
+    <view class="header-section">
+      <view class="main-title">{{ isLyingFlat ? '提前躺平计算器' : '养老金计算器' }}</view>
+      <view class="sub-title">{{ isLyingFlat ? '告别内卷 · 精算你的自由成本' : '规划稳健未来，享受长青人生' }}</view>
+    </view>
+
+    <!-- 模式切换器 -->
+    <view class="switcher-container">
+      <view class="switcher-bg">
+        <view class="switch-btn {{ !isLyingFlat ? 'active-normal' : '' }}" bindtap="toggleMode" data-mode="normal">
+          <van-icon name="bag-o" size="16px" /> 正常退休
+        </view>
+        <view class="switch-btn {{ isLyingFlat ? 'active-early' : '' }}" bindtap="toggleMode" data-mode="flat">
+          <van-icon name="free-postage" size="16px" /> 提前躺平
+        </view>
+      </view>
+    </view>
+
+    <!-- 表单卡片 -->
+    <view class="form-card">
+      <van-cell-group border="{{ false }}">
+        <van-cell title="参保城市" value="{{ city }}" is-link bind:click="showCityPopup" icon="location-o" border="{{ false }}" />
+
+        <van-cell title="性别" icon="contact" border="{{ false }}">
+          <van-radio-group value="{{ gender }}" direction="horizontal" bind:change="onGenderChange">
+            <van-radio name="male" checked-color="{{ isLyingFlat ? '#f97316' : '#4f46e5' }}">男</van-radio>
+            <van-radio name="female" checked-color="{{ isLyingFlat ? '#f97316' : '#4f46e5' }}">女</van-radio>
+          </van-radio-group>
+        </van-cell>
+
+        <van-field label="当前年龄" value="{{ age }}" type="number" input-align="right" bind:change="onAgeChange" left-icon="clock-o" border="{{ false }}">
+          <view slot="button" class="unit-text">岁</view>
+        </van-field>
+
+        <van-field label="退休年龄" value="{{ retireAge }}" type="number" input-align="right" bind:change="onRetireAgeChange" left-icon="flag-o" border="{{ false }}">
+          <view slot="button" class="unit-text">岁</view>
+        </van-field>
+
+        <van-field label="已缴年限" value="{{ years }}" type="number" input-align="right" right-icon="question-o" bind:change="onYearsChange" bind:click-icon="onShowYearsHelp" left-icon="chart-trending-o" border="{{ false }}">
+          <view slot="button" class="unit-text">年</view>
+        </van-field>
+
+        <van-field label="账户余额" value="{{ balance }}" type="number" input-align="right" bind:change="onBalanceChange" left-icon="gold-coin-o" border="{{ false }}">
+          <view slot="button" class="unit-text">元</view>
+        </van-field>
+
+        <block wx:if="{{ isLyingFlat }}">
+          <van-cell title="缴费档次" border="{{ false }}" icon="vip-card-o">
+            <van-radio-group value="{{ flatInvestmentRate }}" direction="horizontal" bind:change="onFlatRateChange">
+              <van-radio name="0.6" checked-color="#f97316">60%</van-radio>
+              <van-radio name="1.0" checked-color="#f97316">100%</van-radio>
+              <van-radio name="3.0" checked-color="#f97316">300%</van-radio>
+            </van-radio-group>
+          </van-cell>
+        </block>
+
+        <block wx:else>
+          <van-field label="税前月薪" value="{{ salary }}" type="number" input-align="right" bind:change="onSalaryChange" left-icon="balance-list-o" border="{{ false }}">
+            <view slot="button" class="unit-text">元</view>
+          </van-field>
+
+          <van-cell center title="开启涨薪预测 (年涨3%)" border="{{ false }}" icon="ascending">
+            <van-switch slot="right-icon" checked="{{ useGrowth }}" bind:change="onGrowthChange" size="24px" active-color="#4f46e5" />
+          </van-cell>
+        </block>
+      </van-cell-group>
+    </view>
+
+    <!-- 结果卡片展示 -->
+    <view wx:if="{{ result }}" class="result-display-card {{ isLyingFlat ? 'flat-result' : 'normal-result' }}" id="result-section">
+      <view class="result-header">
+        <text class="result-label">{{ isLyingFlat ? '预计自由后的月领' : '退休后月领金额' }}</text>
+        <view class="result-main-amount">
+          <text class="currency">¥</text>
+          <text class="amount-val">{{ result.detail.total_pension }}</text>
+        </view>
+      </view>
+
+      <view class="result-grid">
+        <view class="grid-item">
+          <text class="grid-label">基础养老金</text>
+          <text class="grid-value">¥{{ result.detail.basic_pension }}</text>
+        </view>
+        <view class="grid-item">
+          <text class="grid-label">账户养老金</text>
+          <text class="grid-value">¥{{ result.detail.account_pension }}</text>
+        </view>
+      </view>
+
+      <view class="analysis-box">
+        <view class="analysis-title">精算师解读</view>
+        <view class="analysis-content">
+          <block wx:for="{{ processText }}" wx:key="index">
+            <view class="analysis-p">{{ item }}</view>
+          </block>
+        </view>
+      </view>
+    </view>
+
+    <view class="footer-tips">
+      免责声明：本计算结果基于现有政策估算，仅供参考。实际金额以社保局核算为准。
+    </view>
+
+  </view>
 </view>
 
-<view class="container">
-  <van-cell-group inset custom-class="input-card">
-    <van-cell title="参保城市" value="{{ city }}" is-link bind:click="showCityPopup" />
+<!-- 城市选择 -->
+<van-popup 
+  show="{{ showCity }}" 
+  position="bottom" 
+  round 
+  bind:close="onCityCancel"
+  lock-scroll="{{ true }}"
+>
+  <van-picker 
+    wx:if="{{ showCity }}" 
+    show-toolbar 
+    title="选择地区" 
+    columns="{{ cityColumns }}" 
+    default-index="{{ defaultCityIndex }}" 
+    item-height="{{ 50 }}"
+    visible-item-count="{{ 5 }}"
+    bind:cancel="onCityCancel" 
+    bind:confirm="onCityConfirm" 
+  />
+</van-popup>
 
-    <van-cell title="性别">
-      <van-radio-group value="{{ gender }}" direction="horizontal" bind:change="onGenderChange">
-        <van-radio name="male">男</van-radio>
-        <van-radio name="female">女</van-radio>
-      </van-radio-group>
-    </van-cell>
-
-    <van-field
-      label="当前年龄"
-      value="{{ age }}"
-      type="number"
-      placeholder="例如 30"
-      bind:change="onAgeChange"
-    />
-
-    <van-field
-      label="退休年龄"
-      value="{{ retireAge }}"
-      type="number"
-      placeholder="男60 / 女55"
-      bind:change="onRetireAgeChange"
-    />
-
-    <van-field
-      label="已缴年限"
-      value="{{ years }}"
-      type="number"
-      placeholder="例如 5"
-      right-icon="question-o"
-      bind:change="onYearsChange"
-      bind:click-icon="onShowYearsHelp"
-    />
-
-    <van-field
-      label="账户余额"
-      value="{{ balance }}"
-      type="number"
-      placeholder="个人账户当前余额"
-      left-icon="gold-coin-o"
-      bind:change="onBalanceChange"
-    />
-
-    <van-field
-      label="税前月薪"
-      value="{{ salary }}"
-      type="number"
-      placeholder="当前税前工资"
-      left-icon="balance-list-o"
-      bind:change="onSalaryChange"
-    />
-
-    <van-cell center title="开启涨薪预测 (年涨3%)">
-      <van-switch slot="right-icon" checked="{{ useGrowth }}" bind:change="onGrowthChange" size="24px" />
-    </van-cell>
-
-  </van-cell-group>
-
-  <view class="btn-area">
-    <van-button block type="primary" size="large" bind:click="onSubmit">
-      开始计算
-    </van-button>
+<!-- 吸底按钮面板 -->
+<view class="action-panel">
+  <view class="action-btn {{ isLyingFlat ? 'btn-orange' : 'btn-indigo' }}" bindtap="onSubmit">
+    {{ isLyingFlat ? '测算自由成本' : '开始精算' }}
   </view>
-
-  <van-popup
-    show="{{ showCity }}"
-    position="bottom"
-    round
-    bind:close="onCityCancel"
-  >
-    <van-picker
-      wx:if="{{ showCity }}"
-      show-toolbar
-      title="选择地区"
-      columns="{{ cityColumns }}"
-      default-index="{{ defaultCityIndex }}"
-      visible-item-count="{{ 5 }}"
-      item-height="{{ 54 }}"
-      bind:cancel="onCityCancel"
-      bind:confirm="onCityConfirm"
-    />
-  </van-popup>
-
-  <view wx:if="{{ result }}" class="result-card" id="result-section">
-    <view class="result-title">
-      预估月领 ({{ useGrowth ? '含涨薪预测' : '保守估算' }})
-    </view>
-    <view class="result-amount">¥ {{ result.detail.total_pension }}</view>
-
-    <van-cell-group>
-      <van-cell title="基础养老金" value="¥ {{ result.detail.basic_pension }}" />
-      <van-cell title="个人账户养老金" value="¥ {{ result.detail.account_pension }}" />
-      <van-cell title="退休时账户余额" value="¥ {{ result.detail.final_balance }}" />
-      <van-cell title="缴费指数" value="{{ result.detail.avg_index }}" />
-    </van-cell-group>
-
-    <!-- 🌟 新增：计算过程叙事 -->
-    <view class="process-box">
-      <view class="process-title">估算结果解读</view>
-      <view class="process-content">
-        <block wx:for="{{ processText }}" wx:key="index">
-          <view class="process-p">{{ item }}</view>
-        </block>
-      </view>
-    </view>
-
-    <!-- 🌟 新增：核心公式展示 -->
-    <view class="formula-box">
-      <view class="formula-title">估算公式说明</view>
-      <view class="formula-item">
-        <text class="formula-label">基础养老金 =</text>
-        <text class="formula-val">(退休时计发基数 + 本人指数化月薪) ÷ 2 × 缴费年限 × 1%</text>
-      </view>
-      <view class="formula-item">
-        <text class="formula-label">个人账户养老金 =</text>
-        <text class="formula-val">个人账户存储额 ÷ 计发月数</text>
-      </view>
-    </view>
-
-  </view>
-
-  <view class="feedback-area">
-    <van-button open-type="feedback" icon="edit" plain hairline type="default" size="small" round>
-      意见反馈
-    </van-button>
-  </view>
-
-  <view class="disclaimer">
-    免责声明：本工具计算结果仅供参考，不作为官方社保核算依据。<br/>
-    实际金额请以当地社保局核算为准。
-  </view>
-
 </view>

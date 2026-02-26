@@ -7,11 +7,13 @@ Page({
     city: '北京',
     gender: 'female',
     age: 30,
-    retireAge: 50,
+    retireAge: 55,
     years: 5,
     balance: 50000,
     salary: 20000,
     useGrowth: false,
+    isLyingFlat: false,
+    flatInvestmentRate: '0.6',
 
     showCity: false,
     cityColumns: [
@@ -43,18 +45,32 @@ Page({
   onYearsChange(event) { this.setData({ years: event.detail }); },
   onBalanceChange(event) { this.setData({ balance: event.detail }); },
   onSalaryChange(event) { this.setData({ salary: event.detail }); },
+  
+  toggleMode(event) {
+    const { mode } = event.currentTarget.dataset;
+    const isLyingFlat = mode === 'flat';
+    if (this.data.isLyingFlat === isLyingFlat) return;
+    
+    this.setData({ 
+      isLyingFlat,
+      // 切换模式时清空结果，避免数据混淆
+      result: null 
+    });
+  },
+
+  onFlatRateChange(event) { this.setData({ flatInvestmentRate: event.detail }); },
   onGenderChange(event) {
     const gender = event.detail;
     this.setData({ gender: gender, retireAge: gender === 'female' ? 55 : 60 });
   },
   onGrowthChange({ detail }) { this.setData({ useGrowth: detail }); },
   onShowYearsHelp() {
-    wx.showModal({ title: '说明', content: '含视同缴费年限...', showCancel: false });
+    wx.showModal({ title: '说明', content: '含视同缴费年限。缴费满15年是领取养老金的最低门槛。', showCancel: false });
   },
 
   // --- 提交函数 ---
   onSubmit() {
-    if (this.data.age === '' || this.data.salary === '') {
+    if (this.data.age === '' || (!this.data.isLyingFlat && this.data.salary === '')) {
       Toast.fail('请填写完整信息');
       return;
     }
@@ -68,7 +84,9 @@ Page({
       years: Number(this.data.years),
       balance: Number(this.data.balance),
       salary: Number(this.data.salary),
-      wageGrowth: this.data.useGrowth ? 0.03 : 0
+      wageGrowth: this.data.useGrowth ? 0.03 : 0,
+      isLyingFlat: this.data.isLyingFlat,
+      flatInvestmentRate: Number(this.data.flatInvestmentRate)
     };
 
     const res = calculatePension(payload);
@@ -102,14 +120,38 @@ Page({
   },
 
   generateProcessText(res) {
-    const { params, factors, detail } = res;
-    const p1 = `您今年 ${params.age} 岁，所在省份/城市目前的平均养老金计发基数（可理解为平均工资）为 ${factors.baseSalary} 元。`;
-    const p2 = `您计划在 ${params.retireAge} 岁退休，距离现在还有 ${factors.yearsToWork} 年。按基数每年增长 ${(params.baseGrowth * 100).toFixed(0)}% 预测，您退休时该地区的计发基数将达到约 ${factors.futureBaseSalary.toFixed(2)} 元。`;
-    const p3 = `您当前的月薪为 ${params.salary} 元，据此估算出您的平均缴费指数为 ${factors.avgIndex.toFixed(2)}。到退休时，您的累计缴费年限将达到 ${factors.totalYears} 年。根据公式，您的【基础养老金】预估为：${factors.futureBaseSalary.toFixed(2)} × (1 + ${factors.avgIndex.toFixed(2)}) ÷ 2 × ${factors.totalYears} × 1% = ${detail.basic_pension} 元。`;
-    const p4 = `您现在的个人账户余额为 ${params.balance} 元。在未来的 ${factors.yearsToWork} 年里，按现有缴费水平，您的账户还将累计存入约 ${factors.futureContribution.toFixed(2)} 元。`;
-    const p5 = `到退休时，您的个人账户总额预计达到 ${detail.final_balance} 元。根据国家标准，${params.retireAge} 岁退休对应的计发月数为 ${factors.dividingMonths} 个月。因此，您的【个人账户养老金】预估为：${detail.final_balance} ÷ ${factors.dividingMonths} = ${detail.account_pension} 元。`;
-    const summary = `【总结】基础养老金 (${detail.basic_pension}) + 个人账户养老金 (${detail.account_pension}) = 总月领金额 ${detail.total_pension} 元。`;
-    return [p1, p2, p3, p4, p5, summary];
+    const { params, factors, detail, isLyingFlat } = res;
+    let texts = [];
+
+    if (isLyingFlat) {
+      texts.push(`【躺平计划】您选择现在停止工作，并以 ${params.flatInvestmentRate * 100}% 的档次自缴社保直到 ${params.retireAge} 岁。`);
+      texts.push(`在此期间，您总计需要自行缴纳社保费用约 ${detail.total_cost} 元（已考虑 4050 等政策补贴）。`);
+      
+      if (detail.unemployment_benefit > 0) {
+        texts.push(`基于您已缴纳 ${params.years} 年社保，躺平后您可以先领取约 ${detail.unemployment_months} 个月的失业金，总计约 ${detail.unemployment_benefit} 元，这可以作为您的起步资金。`);
+      }
+
+      if (detail.subsidy_4050 > 0) {
+        texts.push(`由于您符合“4050”高龄就业困难群体条件，政府将为您补贴约 ${detail.subsidy_4050} 元的社保费用，大大降低了躺平门槛。`);
+      }
+
+      const roiMonths = detail.total_cost / detail.total_pension;
+      texts.push(`退休后，您预计每月领取 ${detail.total_pension} 元。您的躺平回本周期约为 ${roiMonths.toFixed(1)} 个月（即退休后 ${(roiMonths / 12).toFixed(1)} 年回本）。`);
+      
+      if (params.flatInvestmentRate === 0.6) {
+        texts.push(`提示：当前您选择的是 60% 最低档位，这是性价比最高的方案，回本最快。`);
+      }
+    } else {
+      const p1 = `您今年 ${params.age} 岁，所在省份/城市目前的平均养老金计发基数为 ${factors.baseSalary} 元。`;
+      const p2 = `您计划在 ${params.retireAge} 岁退休，距离现在还有 ${factors.yearsToWork} 年。退休时该地区的计发基数预计将达到约 ${factors.futureBaseSalary.toFixed(2)} 元。`;
+      const p3 = `根据公式，您的【基础养老金】预估为：${detail.basic_pension} 元。这是基于您 ${factors.totalYears} 年的累计缴费计算得出的。`;
+      const p4 = `到退休时，您的个人账户总额预计达到 ${detail.final_balance} 元。按 ${params.retireAge} 岁退休计发月数 ${factors.dividingMonths} 个月计算，【个人账户养老金】为 ${detail.account_pension} 元。`;
+      texts = [p1, p2, p3, p4];
+    }
+
+    const summary = `【总结】退休后总月领金额预估为 ${detail.total_pension} 元。`;
+    texts.push(summary);
+    return texts;
   },
 
   /**

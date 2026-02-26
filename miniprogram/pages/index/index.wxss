@@ -1,193 +1,278 @@
-/* 页面背景 */
+/* 页面基础 */
 page {
-  /* 🌟 使用更有质感的蓝灰色背景，增加对比 */
-  background-color: #f0f2f5;
-  padding-bottom: 50px;
-  font-size: 16px;
+  background-color: #f8fafc; /* slate-50 */
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, sans-serif;
+  padding-bottom: calc(100px + env(safe-area-inset-bottom));
+  font-size: 18px; /* 🌟 从 16px 提升到 18px */
 }
 
-/* 🌟 顶部品牌区域 */
-.page-header {
-  background: linear-gradient(180deg, #1989fa 0%, #0570e1 100%);
-  padding: 40px 20px 60px;
-  text-align: center;
-  color: white;
-}
-
-.page-header .title {
-  font-size: 30px;
-  font-weight: 800;
-  margin-bottom: 10px;
-  letter-spacing: 1px;
-}
-
-.page-header .subtitle {
-  font-size: 15px;
-  opacity: 0.9;
-  font-weight: 300;
-}
-
-/* 容器负外边距，让卡片嵌入页眉 */
-.container {
-  margin-top: -30px;
-  padding: 0 0 20px;
-}
-
-/* 🌟 输入卡片增强 */
-.input-card {
-  box-shadow: 0 10px 25px rgba(0,0,0,0.08) !important;
-  border-radius: 16px !important;
-  overflow: hidden;
-}
-
-.van-cell, .van-field__input, .van-cell__title, .van-cell__value {
-  font-size: 16px !important;
-}
-
-/* 按钮区域 */
-.btn-area {
-  margin: 35px 40px; /* 🌟 增加左右边距（16->40），让按钮变短，显得更精致 */
-}
-
-.van-button--primary {
-  background: #1989fa !important;
-  border: none !important;
-  box-shadow: 0 8px 20px rgba(25, 137, 250, 0.2); /* 更淡更柔和的阴影 */
-  border-radius: 10px !important; /* 稍微增加一点弧度 */
-  /* 🌟 极简字重，增加上下空间 */
-  height: 60px !important; 
-  line-height: 60px !important;
-  font-weight: 400 !important; 
-  letter-spacing: 3px; /* 增加字间距，显得更舒展 */
-}
-
-.van-button--large {
-  font-size: 19px !important; /* 稍微调小一点，比例更协调 */
-}
-
-/* 🌟 结果卡片视觉重构 */
-.result-card {
-  margin: 20px 16px;
-  background: white;
-  border-radius: 16px;
-  padding: 30px 20px;
-  box-shadow: 0 12px 30px rgba(25, 137, 250, 0.12); /* 蓝色投影 */
-  text-align: center;
+.page-wrapper {
   position: relative;
-  border: 1px solid rgba(25, 137, 250, 0.1);
+  min-height: 100vh;
 }
 
-.result-title {
-  font-size: 16px;
-  color: #666;
-  margin-bottom: 15px;
+/* 🌟 动态背景层 */
+.bg-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 280px; /* 🌟 350px -> 280px 显著缩减背景高度 */
+  z-index: 0;
+  transition: background-color 0.5s ease-in-out;
+}
+.theme-indigo .bg-layer { background: linear-gradient(180deg, #4f46e5 0%, #6366f1 100%); }
+.theme-orange .bg-layer { background: linear-gradient(180deg, #f97316 0%, #fb923c 100%); }
+
+/* 内容层 */
+.content-layer {
+  position: relative;
+  z-index: 10;
+  padding: 30px 20px 20px; /* 🌟 40px -> 30px 顶部留白缩减 */
+}
+
+/* 头部样式 */
+.header-section {
+  text-align: center;
+  margin-bottom: 20px; /* 🌟 30px -> 20px 底部间距缩减 */
+}
+
+.main-title {
+  font-size: 30px; /* 🌟 32px -> 30px 稍微收敛，但依然很大 */
+  font-weight: 800;
+  color: white;
+  margin-bottom: 6px; /* 🌟 10px -> 6px 标题下间距缩减 */
+  letter-spacing: -0.5px;
+}
+
+.sub-title {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 15px; /* 🌟 16px -> 15px 稍微收敛 */
+}
+
+/* 模式切换器 */
+.switcher-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px; /* 🌟 30px -> 20px 间距缩减 */
+}
+
+.switcher-bg {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(12px);
+  padding: 5px;
+  border-radius: 18px;
+  display: flex;
+  width: 100%;
+  max-width: 280px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.switch-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 0;
+  border-radius: 14px;
+  font-size: 15px; /* 🌟 16px -> 15px */
+  font-weight: 700;
+  color: white;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.theme-indigo .active-normal {
+  background: white;
+  color: #4f46e5;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.theme-orange .active-early {
+  background: white;
+  color: #f97316;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* 🌟 表单卡片 */
+.form-card {
+  background: white;
+  border-radius: 24px; /* 🌟 30px -> 24px 稍微收敛圆角以释放空间 */
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.05);
+  padding: 8px; /* 🌟 15px -> 8px 内部留白缩减 */
+  margin-bottom: 20px;
+  border: 1px solid rgba(0,0,0,0.02);
+}
+
+/* 🌟 强制调整 Vant 文字大小 */
+.van-cell {
+  padding: 10px 10px !important; /* 🌟 恢复更紧凑的行间距 */
+  display: flex !important;
+  align-items: center !important; /* 确保内容垂直居中对齐 */
+}
+
+.van-cell__title, .van-field__label {
+  font-size: 17px !important; /* 🌟 标签字号 */
+  color: #334155 !important;
+  font-weight: 500 !important;
+}
+
+.van-field__input {
+  font-size: 19px !important; /* 🌟 输入数字号 */
+  font-weight: bold !important;
+  color: #0f172a !important;
+}
+
+.van-cell__value {
+  font-size: 17px !important;
+}
+
+.van-cell__left-icon-wrap {
+  margin-right: 10px; /* 🌟 14px -> 10px */
+  padding: 6px; /* 🌟 10px -> 6px 缩小图标背景，确保对齐 */
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.result-title::before, .result-title::after {
-  content: "";
-  width: 20px;
-  height: 1px;
-  background: #ddd;
-  margin: 0 10px;
+.theme-indigo .van-cell__left-icon-wrap { background: #f5f3ff; color: #4f46e5; }
+.theme-orange .van-cell__left-icon-wrap { background: #fff7ed; color: #f97316; }
+
+.unit-text {
+  color: #64748b;
+  font-size: 16px; /* 🌟 14px -> 16px */
+  font-weight: 500;
+  margin-left: 8px;
 }
 
-.result-amount {
-  font-size: 52px;
-  font-weight: 900;
-  color: #1989fa; /* 绿色 -> 蓝色 */
-  margin-bottom: 25px;
-  text-shadow: 0 2px 10px rgba(25, 137, 250, 0.1);
-}
-
-/* 计算过程推导 */
-.process-box {
-  margin-top: 30px;
-  text-align: left;
-  background-color: #f8fbff; /* 浅蓝底色 */
-  padding: 20px 18px;
-  border-radius: 12px;
-  border-left: 6px solid #1989fa;
-}
-
-.process-title {
-  font-size: 18px;
-  font-weight: bold;
-  color: #1989fa;
-  margin-bottom: 15px;
-  display: flex;
-  align-items: center;
-}
-
-.process-title::before {
-  content: "📝";
-  margin-right: 8px;
-}
-
-.process-p {
-  font-size: 15px;
-  color: #2c3e50;
-  line-height: 1.8;
-  margin-bottom: 15px;
-}
-
-/* 公式展示 */
-.formula-box {
+/* 🌟 结果卡片展示 */
+.result-display-card {
   margin-top: 25px;
-  padding-top: 20px;
-  border-top: 1px dashed #ced6e0;
+  padding: 30px 24px;
+  border-radius: 32px;
+  background: white;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.08);
 }
 
-.formula-title {
-  font-size: 15px;
+.result-header {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.result-label {
+  font-size: 17px; /* 🌟 14px -> 17px */
+  color: #64748b;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.result-main-amount {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+}
+
+.currency {
+  font-size: 24px; /* 🌟 20px -> 24px */
   font-weight: bold;
-  color: #57606f;
+  margin-right: 6px;
+}
+
+.amount-val {
+  font-size: 52px; /* 🌟 44px -> 52px */
+  font-weight: 900;
+  letter-spacing: -1px;
+}
+
+.normal-result .result-main-amount { color: #4f46e5; }
+.flat-result .result-main-amount { color: #f97316; }
+
+.result-grid {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.grid-item {
+  flex: 1;
+  background: #f8fafc;
+  padding: 18px 14px;
+  border-radius: 20px;
+  text-align: center;
+}
+
+.grid-label {
+  font-size: 15px; /* 🌟 12px -> 15px */
+  color: #94a3b8;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.grid-value {
+  font-size: 20px; /* 🌟 16px -> 20px */
+  font-weight: 800;
+  color: #1e293b;
+}
+
+.analysis-box {
+  background: #f8fafc;
+  padding: 20px;
+  border-radius: 24px;
+  border-left: 6px solid #4f46e5;
+}
+.flat-result .analysis-box { border-left-color: #f97316; }
+
+.analysis-title {
+  font-size: 19px; /* 🌟 16px -> 19px */
+  font-weight: 800;
+  color: #1e293b;
   margin-bottom: 15px;
 }
 
-.formula-label {
-  display: block;
-  font-size: 13px;
-  color: #747d8c;
-  margin-bottom: 6px;
+.analysis-p {
+  font-size: 17px; /* 🌟 14px -> 17px */
+  color: #334155;
+  line-height: 1.8; /* 增加行高方便阅读 */
+  margin-bottom: 12px;
 }
 
-.formula-val {
-  display: block;
-  font-size: 13px;
-  color: #2f3542;
-  background: #f1f2f6;
-  padding: 12px;
-  border-radius: 8px;
+/* 🌟 吸底按钮面板 */
+.action-panel {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 15px 24px calc(15px + env(safe-area-inset-bottom));
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  z-index: 1000;
+  border-top: 1px solid rgba(0,0,0,0.05);
+}
+
+.action-btn {
+  width: 100%;
+  padding: 18px 0;
+  border-radius: 20px;
+  color: white;
+  font-weight: 800;
+  font-size: 20px; /* 🌟 17px -> 20px */
+  text-align: center;
+  transition: transform 0.1s active;
+}
+
+.btn-indigo { background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%); box-shadow: 0 10px 25px rgba(79, 70, 229, 0.3); }
+.btn-orange { background: linear-gradient(135deg, #f97316 0%, #fb7185 100%); box-shadow: 0 10px 25px rgba(249, 115, 22, 0.3); }
+
+.action-btn:active {
+  transform: scale(0.97);
+  opacity: 0.9;
+}
+
+.footer-tips {
+  margin: 35px 24px;
+  text-align: center;
+  color: #94a3b8;
+  font-size: 14px; /* 🌟 12px -> 14px */
   line-height: 1.6;
-}
-
-.feedback-area {
-  margin-top: 40px;
-  text-align: center;
-}
-
-.disclaimer {
-  margin: 30px 20px 40px;
-  text-align: center;
-  color: #a4b0be;
-  font-size: 13px;
-  line-height: 1.8;
-}
-
-/* 🌟 放大选择器滚轮中的文字 */
-.van-picker-column__item {
-  font-size: 22px !important; /* 18 -> 22 */
-  color: #333 !important;
-}
-
-.van-picker__toolbar {
-  height: 60px !important; /* 50 -> 60 */
-  line-height: 60px !important;
-}
-
-.van-picker__confirm, .van-picker__cancel {
-  font-size: 18px !important; /* 16 -> 18 */
 }
