@@ -5,7 +5,7 @@
   "window": {
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#fff",
-    "navigationBarTitleText": "养老金计算器",
+    "navigationBarTitleText": "提前躺平计算器",
     "navigationBarTextStyle": "black"
   },
   "usingComponents": {

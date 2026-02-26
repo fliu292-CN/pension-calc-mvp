@@ -276,3 +276,153 @@ page {
   font-size: 14px; /* 🌟 12px -> 14px */
   line-height: 1.6;
 }
+
+/* 🌟 已缴年限问号图标对齐 */
+.custom-label {
+  display: flex !important;
+  align-items: center !important;
+}
+
+.help-icon {
+  margin-left: 4px !important;
+  color: #94a3b8 !important;
+  font-size: 16px !important;
+  /* 增加一点内边距，让手指更容易点中问号 */
+  padding: 2px 4px !important; 
+}
+
+/* 🌟 躺平费用预览实时提示 */
+.flat-cost-tip {
+  margin: 0 12px 12px;
+  padding: 10px 14px;
+  background: #fff7ed;
+  border-radius: 12px;
+  font-size: 14px;
+  color: #9a3412;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.flat-cost-tip .highlight {
+  font-weight: 800;
+  color: #f97316;
+  font-size: 17px;
+}
+
+/* 🌟 躺平收支对比看板 */
+.flat-balance-board {
+  display: flex;
+  background: #f8fafc;
+  border-radius: 24px;
+  padding: 20px 10px;
+  margin-bottom: 30px;
+  position: relative;
+}
+
+.balance-side {
+  flex: 1;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.balance-side.outflow .b-value { color: #ef4444; }
+.balance-side.inflow .b-value { color: #10b981; }
+
+.b-label {
+  font-size: 14px;
+  color: #64748b;
+  margin-bottom: 6px;
+}
+
+.b-value {
+  font-size: 24px;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.b-sub {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.balance-divider {
+  width: 1px;
+  background: #e2e8f0;
+  margin: 0 10px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vs-circle {
+  position: absolute;
+  background: #e2e8f0;
+  color: #64748b;
+  font-size: 11px;
+  font-weight: bold;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 4px solid #f8fafc;
+}
+
+/* 🌟 躺平缴费档次自定义按钮组合 */
+.custom-level-section {
+  padding: 10px 12px 16px;
+}
+
+.level-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.level-icon-wrap {
+  background: #fff7ed;
+  color: #f97316;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+}
+
+.level-title {
+  font-size: 17px;
+  font-weight: bold;
+  color: #334155;
+}
+
+.level-options {
+  display: flex;
+  gap: 10px;
+}
+
+.level-btn {
+  flex: 1;
+  text-align: center;
+  padding: 10px 0;
+  font-size: 16px;
+  font-weight: bold;
+  color: #64748b;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+/* 选中状态 */
+.level-btn.active {
+  background: #f97316;
+  color: #ffffff;
+  border-color: #f97316;
+  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.2);
+}

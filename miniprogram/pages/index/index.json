@@ -1,5 +1,5 @@
 {
-  "navigationBarTitleText": "养老金计算",
+  "navigationBarTitleText": "提前躺平计算器",
   "usingComponents": {
     "cloud-tip-modal": "/components/cloudTipModal/index"
   }

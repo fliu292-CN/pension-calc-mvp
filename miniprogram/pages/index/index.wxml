@@ -9,7 +9,7 @@
   <view class="content-layer">
     <!-- 头部区域 -->
     <view class="header-section">
-      <view class="main-title">{{ isLyingFlat ? '提前躺平计算器' : '养老金计算器' }}</view>
+      <view class="main-title">提前躺平计算器</view>
       <view class="sub-title">{{ isLyingFlat ? '告别内卷 · 精算你的自由成本' : '规划稳健未来，享受长青人生' }}</view>
     </view>
 
@@ -45,7 +45,20 @@
           <view slot="button" class="unit-text">岁</view>
         </van-field>
 
-        <van-field label="已缴年限" value="{{ years }}" type="number" input-align="right" right-icon="question-o" bind:change="onYearsChange" bind:click-icon="onShowYearsHelp" left-icon="chart-trending-o" border="{{ false }}">
+        <van-field 
+          value="{{ years }}" 
+          type="number" 
+          input-align="right" 
+          bind:change="onYearsChange" 
+          left-icon="chart-trending-o"
+          border="{{ false }}"
+          use-label-slot
+          label-width="110px"
+        >
+          <view slot="label" class="custom-label">
+            <text>已缴年限</text>
+            <van-icon name="question-o" class="help-icon" catch:tap="onShowYearsHelp" />
+          </view>
           <view slot="button" class="unit-text">年</view>
         </van-field>
 
@@ -54,13 +67,22 @@
         </van-field>
 
         <block wx:if="{{ isLyingFlat }}">
-          <van-cell title="缴费档次" border="{{ false }}" icon="vip-card-o">
-            <van-radio-group value="{{ flatInvestmentRate }}" direction="horizontal" bind:change="onFlatRateChange">
-              <van-radio name="0.6" checked-color="#f97316">60%</van-radio>
-              <van-radio name="1.0" checked-color="#f97316">100%</van-radio>
-              <van-radio name="3.0" checked-color="#f97316">300%</van-radio>
-            </van-radio-group>
-          </van-cell>
+          <view class="custom-level-section">
+            <view class="level-header">
+              <view class="level-icon-wrap">
+                <van-icon name="gem-o" size="20px" />
+              </view>
+              <text class="level-title">缴费档次</text>
+            </view>
+            <view class="level-options">
+              <view class="level-btn {{ flatInvestmentRate === '0.6' ? 'active' : '' }}" bindtap="onFlatRateClick" data-rate="0.6">60%</view>
+              <view class="level-btn {{ flatInvestmentRate === '1.0' ? 'active' : '' }}" bindtap="onFlatRateClick" data-rate="1.0">100%</view>
+              <view class="level-btn {{ flatInvestmentRate === '3.0' ? 'active' : '' }}" bindtap="onFlatRateClick" data-rate="3.0">300%</view>
+            </view>
+          </view>
+          <view class="flat-cost-tip">
+            <van-icon name="info-o" /> 当前档位每月自缴约：<text class="highlight">¥{{ monthlyFlatCost }}</text>
+          </view>
         </block>
 
         <block wx:else>
@@ -77,8 +99,26 @@
 
     <!-- 结果卡片展示 -->
     <view wx:if="{{ result }}" class="result-display-card {{ isLyingFlat ? 'flat-result' : 'normal-result' }}" id="result-section">
+      
+      <!-- 躺平模式：增加收支对比看板 -->
+      <view wx:if="{{ isLyingFlat }}" class="flat-balance-board">
+        <view class="balance-side outflow">
+          <text class="b-label">躺平总投入</text>
+          <text class="b-value">¥{{ result.detail.total_cost }}</text>
+          <text class="b-sub">从现在缴到退休</text>
+        </view>
+        <view class="balance-divider">
+          <view class="vs-circle">VS</view>
+        </view>
+        <view class="balance-side inflow">
+          <text class="b-label">可领失业金</text>
+          <text class="b-value">¥{{ result.detail.unemployment_benefit }}</text>
+          <text class="b-sub">预计领{{ result.detail.unemployment_months }}个月</text>
+        </view>
+      </view>
+
       <view class="result-header">
-        <text class="result-label">{{ isLyingFlat ? '预计自由后的月领' : '退休后月领金额' }}</text>
+        <text class="result-label">{{ isLyingFlat ? '退休后的“自由金”' : '退休后月领金额' }}</text>
         <view class="result-main-amount">
           <text class="currency">¥</text>
           <text class="amount-val">{{ result.detail.total_pension }}</text>

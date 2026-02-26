@@ -37,7 +37,9 @@ Page({
   onCityCancel() { this.setData({ showCity: false }); },
   onCityConfirm(event) {
     const { value } = event.detail;
-    this.setData({ city: value, showCity: false });
+    this.setData({ city: value, showCity: false }, () => {
+      this.calculateMonthlyFlatCost();
+    });
   },
 
   onAgeChange(event) { this.setData({ age: event.detail }); },
@@ -55,17 +57,69 @@ Page({
       isLyingFlat,
       // 切换模式时清空结果，避免数据混淆
       result: null 
+    }, () => {
+      if (isLyingFlat) this.calculateMonthlyFlatCost();
     });
   },
 
-  onFlatRateChange(event) { this.setData({ flatInvestmentRate: event.detail }); },
+  onFlatRateClick(event) { 
+    const rate = event.currentTarget.dataset.rate;
+    if (this.data.flatInvestmentRate !== rate) {
+      this.setData({ flatInvestmentRate: rate }, () => {
+        this.calculateMonthlyFlatCost();
+      }); 
+    }
+  },
+
+  calculateMonthlyFlatCost() {
+    if (!this.data.isLyingFlat) return;
+    const config = REGION_CONFIG[this.data.city];
+    if (config) {
+      const monthlyCost = Math.round(config.baseSalary * Number(this.data.flatInvestmentRate) * 0.20);
+      this.setData({ monthlyFlatCost: monthlyCost });
+    }
+  },
   onGenderChange(event) {
     const gender = event.detail;
     this.setData({ gender: gender, retireAge: gender === 'female' ? 55 : 60 });
   },
   onGrowthChange({ detail }) { this.setData({ useGrowth: detail }); },
+
+  // --- 2025 延迟退休新规计算逻辑 ---
+  getReformDetails() {
+    const { age, retireAge, gender } = this.data;
+    const currentYear = new Date().getFullYear();
+    const birthYear = currentYear - Number(age);
+    const retireYear = currentYear + (Number(retireAge) - Number(age));
+
+    // 1. 最低缴费年限计算
+    let minYears = 15;
+    if (retireYear >= 2030) {
+      minYears = 15 + Math.min(5, (retireYear - 2029) * 0.5);
+    }
+
+    // 2. 建议退休年龄 (基于新规简单估算)
+    // 男 60->63 (4个月延1个月), 女(管) 55->58 (4个月延1个月), 女(工) 50->55 (2个月延1个月)
+    let reformRetireAge = Number(gender === 'male' ? 60 : (this.data.isWorker ? 50 : 55));
+    // 这里简化处理，实际需要出生年月。我们假设用户按原计划退休，看看新规下他理论上应该延多久
+    // 仅作展示提示
+    
+    return { minYears, retireYear };
+  },
+
   onShowYearsHelp() {
-    wx.showModal({ title: '说明', content: '含视同缴费年限。缴费满15年是领取养老金的最低门槛。', showCancel: false });
+    const { minYears, retireYear } = this.getReformDetails();
+    let detailMsg = `目前领取养老金的最低缴费年限要求为 ${minYears} 年。`;
+    
+    if (retireYear >= 2030) {
+      detailMsg = `根据 2025 年延迟退休新规，由于您预计在 ${retireYear} 年退休，您的最低缴费年限要求已提高至 ${minYears} 年（从 2030 年起每年提高 6 个月）。`;
+    }
+
+    wx.showModal({ 
+      title: '缴费年限说明', 
+      content: `${detailMsg}\n\n注：含视同缴费年限。累计缴费年限不足 ${minYears} 年的，退休时无法按月领取养老金。`, 
+      showCancel: false 
+    });
   },
 
   // --- 提交函数 ---
@@ -121,7 +175,13 @@ Page({
 
   generateProcessText(res) {
     const { params, factors, detail, isLyingFlat } = res;
+    const { minYears, retireYear } = this.getReformDetails();
     let texts = [];
+
+    // 🌟 检查缴费年限是否达标
+    if (factors.totalYears < minYears) {
+      texts.push(`⚠️ 注意：在新规下，您在 ${retireYear} 年退休时的累计缴费年限为 ${factors.totalYears} 年，而该年份的最低要求为 ${minYears} 年。您可能需要延长缴费或无法按月领取养老金。`);
+    }
 
     if (isLyingFlat) {
       texts.push(`【躺平计划】您选择现在停止工作，并以 ${params.flatInvestmentRate * 100}% 的档次自缴社保直到 ${params.retireAge} 岁。`);
@@ -159,7 +219,7 @@ Page({
    */
   onShareAppMessage() {
     return {
-      title: '我的退休金能领多少？试试养老金估算工具',
+      title: '提前躺平计算器：老板对不起，我算完这笔账想先撤了... 🏖️',
       path: '/pages/index/index'
     };
   },
@@ -169,7 +229,7 @@ Page({
    */
   onShareTimeline() {
     return {
-      title: '我的退休金能领多少？试试养老金估算工具',
+      title: '提前躺平计算器：老板对不起，我算完这笔账想先撤了... 🏖️',
       query: ''
     };
   }
